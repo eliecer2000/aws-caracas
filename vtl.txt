@@ -1,0 +1,6 @@
+  "aggs": {
+      "sum": { "sum": { "field": "monto" } },
+      "max": { "max": { "field": "monto" } },
+      "min": { "min": { "field": "monto" } },
+      "avg_rango": { "avg": { "field": "rango" } }
+  }

@@ -1,0 +1,17 @@
+{
+    "projectName": "awscaracas",
+    "version": "3.0",
+    "frontend": "javascript",
+    "javascript": {
+        "framework": "vue",
+        "config": {
+            "SourceDir": "src",
+            "DistributionDir": "dist/spa",
+            "BuildCommand": "npm.cmd run-script build",
+            "StartCommand": "npm.cmd run-script serve"
+        }
+    },
+    "providers": [
+        "awscloudformation"
+    ]
+}

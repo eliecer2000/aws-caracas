@@ -1,0 +1,21 @@
+## Query.nearbyBikeStations.res.vtl
+#set( $items = [] )
+#foreach( $entry in $context.result.hits.hits )
+  #if( !$foreach.hasNext )
+   #set( $nextToken = "$entry.sort.get(0)" )
+  #end
+    #set( $xItem = {
+    "id": $entry.get("_source")["id"],
+    "name": $entry.get("_source")["name"],
+    "location": $entry.get("_source")["location"],
+    "createdAt": $entry.get("_source")["createdAt"],
+    "updatedAt": $entry.get("_source")["updatedAt"],
+    "distancia": $entry.get("fields")["geo_distance"][0]
+  })
+  $util.qr($items.add($xItem))
+#end
+$util.toJson({
+  "items": $items,
+  "total": $ctx.result.hits.total,
+  "nextToken": $nextToken
+})

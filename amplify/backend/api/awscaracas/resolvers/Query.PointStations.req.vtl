@@ -1,0 +1,44 @@
+## Query.nearbyBikeStations.req.vtl
+#set( $distance = $util.defaultIfNull($ctx.args.m, 500) )
+#set( $limit = $util.defaultIfNull($ctx.args.limit, 10) )
+{
+  "version": "2017-02-28",
+  "operation": "GET",
+  "path": "/geopoint/doc/_search",
+  "params": {
+    "body": {
+     #if( $context.args.nextToken )"search_after": ["$context.args.nextToken"], #end
+     "size" : ${limit},
+     "query": {
+      "bool" : { "must" : { "match_all" : {} },
+      "filter" : {
+       "geo_distance" : {
+        "distance" : "${distance}m",
+        "distance_type": "arc",
+        "location" : $util.toJson($ctx.args.location)
+        }
+       }
+      }
+     },
+     "script_fields": {
+        "geo_distance": {
+            "script": {
+                "params": $util.toJson($ctx.args.location),
+                 "inline": "doc['location'].arcDistance(params.lat, params.lon)"
+             }
+         }
+     },
+     "_source": {
+    	"includes": ["*"]
+  	},
+     "sort": [{
+       "_geo_distance": {
+        "location": $util.toJson($ctx.args.location),
+        "order": "asc",
+        "unit": "m",
+        "distance_type": "arc"
+       }
+     }]
+   }
+  }
+}

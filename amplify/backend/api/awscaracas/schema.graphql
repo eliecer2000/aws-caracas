@@ -1,0 +1,65 @@
+type GeoPoint @model @searchable {
+  id: ID!
+  name: String!
+  location: Location
+  distancia: Float
+}
+
+type Location {
+  lat: Float
+  lon: Float
+}
+
+input LocationInput {
+  lat: Float
+  lon: Float
+}
+
+type Query {
+  PointStations(
+    location: LocationInput!
+    m: Int
+    limit: Int
+  ): ModelGeoPointConnection
+}
+
+type ModelGeoPointConnection {
+  items: [GeoPoint]
+  total: Int
+  nextToken: String
+}
+
+type Usuarios @model {
+  id: ID!
+  name: String!
+  mensaje: [Mensajes] @connection(keyName: "byMensajes", fields: ["id"])
+}
+
+type Mensajes @key(name: "byMensajes", fields: ["idUsuario"]) @model {
+  id: ID!
+  idUsuario: ID!
+  usuario: Usuarios @connection(fields: ["idUsuario"])
+  mensaje: String!
+}
+
+type Datos @model @searchable {
+  id: ID!
+  descripcion: String!
+  monto: Float
+  rango: Int
+}
+
+type SearchableDatosConnection {
+  items: [Datos]
+  min: Float
+  max: Float
+  sum: Float
+  totalAveg: Float
+  nextToken: String
+  total: Int
+}
+
+type Subscription {
+  onCreateMensajesPrivados(idUsuario: String): Mensajes
+    @aws_subscribe(mutations: ["createMensajes"])
+}
